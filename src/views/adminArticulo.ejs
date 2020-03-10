@@ -1,0 +1,124 @@
+<%- include('partials/header'); -%>
+    <div class="container-fluid">
+        <h2 class="text-center mb-5">Administración artículos</h2>
+        <!-- Button to Open the Modal -->
+        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#myModal">
+            Agregar artículos
+        </button>
+        <!-- The Modal -->
+        <div class="modal" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-dark text-light">
+                        <h4 class="modal-title">Agregar artículos</h4>
+                        <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form action="../articulos/add" method="post">
+                            <div class="form-group">
+                                <input class="form-control" type="text" name="nombreArticulo" placeholder="Nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" name="descripcionArticulo" placeholder="Descripción" required>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" name="precioArticulo" placeholder="Precio" onkeypress='return (event.charCode >= 48 && event.charCode <= 57)' required>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" name="descuentoArticulo" placeholder="Descuento" onkeypress='return (event.charCode >= 48 && event.charCode <= 57)' required>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" name="impuestoArticulo" placeholder="Impuesto" onkeypress='return (event.charCode >= 48 && event.charCode <= 57)' required>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" name="cantidadArticulo" placeholder="Cantidad" onkeypress='return (event.charCode >= 48 && event.charCode <= 57)' required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sel1">Catálogo (seleccione uno):</label>
+                                <select class="form-control" name="catalogoArticulo">
+                                        <% for(var i=0; i < catalogos.length; i++) { %>
+                                      <option value="<%=catalogos[i]._id%>"><%=catalogos[i].nombreCatalogo%></option>
+                                      <% } %>
+                                    </select>
+                            </div>
+                            <button class="btn btn-primary" type="submit">Agregar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-hover text-center shadow">
+            <thead class="thead-dark">
+                <tr>
+                    <th style="width: 164px">Nombre</th>
+                    <th>Descripción</th>
+                    <th style="width: 128px">Precio</th>
+                    <th style="width: 24px">Descuento</th>
+                    <th style="width: 24px">Impuesto</th>
+                    <th style="width: 128px">En Inventario</th>
+                    <th>Catálogo</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < articulos.length; i++) { %>
+                    <form action="../articulos/edit/<%=articulos[i]._id %>" method="post">
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="nombreArticulo" value="<%=articulos[i].nombreArticulo%>" placeholder=" <%=articulos[i].nombreArticulo%>" required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="descripcionArticulo" value="<%=articulos[i].descripcionArticulo%>" placeholder="<%=articulos[i].descripcionArticulo%>" required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="precioArticulo" value="<%=articulos[i].precioArticulo%>" placeholder="<%=articulos[i].precioArticulo%>" onkeypress='return (event.charCode >= 48 && event.charCode <= 57)' required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="descuentoArticulo" value="<%=articulos[i].descuentoArticulo%>" placeholder="<%=articulos[i].descuentoArticulo%>" onkeypress='return (event.charCode >= 48 && event.charCode <= 57)' required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="impuestoArticulo" value="<%=articulos[i].impuestoArticulo%>" placeholder="<%=articulos[i].impuestoArticulo%>" onkeypress='return (event.charCode >= 48 && event.charCode <= 57)' required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="cantidadArticulo" value="<%=articulos[i].cantidadArticulo%>" placeholder="<%=articulos[i].cantidadArticulo%>" onkeypress='return (event.charCode >= 48 && event.charCode <= 57)' required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <select class="form-control" name="nitTienda">
+                                                <% for(var j=0; j < catalogos.length; j++) { 
+                                                  if(catalogos[j]._id == articulos[i].catalogoArticulo){    
+                                                %>
+                                              <option value="<%=catalogos[j]._id%>" selected><%=catalogos[j].nombreCatalogo%></option>
+                                              <% } else{ %>
+                                                <option value="<%=catalogos[j]._id%>"><%=catalogos[j].nombreCatalogo%></option>
+                                                <% } }%>
+                                            </select>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="submit " class="btn btn-info"><i class='fas fa-edit'></i></button>
+                                <a href="../articulos/delete/<%= articulos[i]._id %>" class="btn btn-danger"><i class='fas fa-trash'></i></a>
+                            </td>
+                        </tr>
+                    </form>
+                    <% } %>
+            </tbody>
+        </table>
+    </div>
+    <%- include('partials/footer'); -%>

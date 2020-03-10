@@ -1,0 +1,61 @@
+<%- include('partials/header'); -%>
+    <div class="container px-5 pt-3 pb-5">
+        <h2 class="mb-3">
+            <%= tienda %> /
+                <%= catalogo[0].nombreCatalogo%>
+        </h2>
+        <table class="table table-hover text-center shadow">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Nombre</th>
+                    <th style="width: 316px;">Descripción</th>
+                    <th>
+                        Precio
+                        <a href="#" title="IVA y descuentos" data-toggle="popover" data-trigger="hover" data-content="El precio mostrado ya tiene el IVA incluido. Si el producto tiene descuento, en el precio mostrado también ya se habrá incluido"><i class="fas fa-info-circle text-info" style="font-size:21px;"></i></a>
+                    </th>
+                    <th>Un. disponibles</th>
+                    <th style="width: 120px;">Cantidad</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < articulos.length; i++) { %>
+                    <tr>
+                        <td>
+                            <%= articulos[i].nombreArticulo%>
+                        </td>
+                        <td>
+                            <%= articulos[i].descripcionArticulo%>
+                        </td>
+                        <td>
+                            <% precio = parseFloat(articulos[i].precioArticulo) + parseFloat(articulos[i].precioArticulo)*parseFloat(articulos[i].impuestoArticulo)/100 - parseFloat(articulos[i].precioArticulo)*parseFloat(articulos[i].descuentoArticulo)/100; %>
+                                <% precioFinal = precio.toFixed(2); %>
+                                    <%= precioFinal %>
+                                        <% if(parseInt(articulos[i].descuentoArticulo) > 0){ %>
+                                            <span class="badge badge-pill badge-danger"><i class="fa fa-minus" style="font-size: 10px;"></i> <%=articulos[i].descuentoArticulo %>%</span>
+                                            <% } %>
+                        </td>
+                        <td>
+                            <%= articulos[i].cantidadArticulo%>
+                        </td>
+                        <td>
+                            <form action="/agregarCarro/?id=<%=articulos[i]._id %>" method="post">
+                                <div class="form-group">
+                                    <input type="number" class="form-control" name="cantidad" min="1" max="<%= articulos[i].cantidadArticulo%>" value="1" required>
+                                </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-success" type="submit"><i class='fas fa-shopping-cart'></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
+    <%- include('partials/footer'); -%>

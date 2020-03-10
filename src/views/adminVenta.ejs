@@ -1,0 +1,43 @@
+<%- include('partials/header'); -%>
+    <div class="container">
+        <h2 class="text-center mb-5">Administración ventas</h2>
+        <table class="table table-hover text-center shadow">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Fecha de la venta</th>
+                    <th>Hora de la venta</th>
+                    <th>Comprador</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < ventas.length; i++) { %>
+                    <form action="../ventas/edit/<%=ventas[i]._id %>" method="post">
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="fechaVenta" value="<%=ventas[i].fechaVenta%>" placeholder="<%=ventas[i].fechaVenta%>" required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="horaVenta" value="<%=ventas[i].horaVenta%>" placeholder="<%=ventas[i].horaVenta%>" required>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="cedulaComprador" value="<%= ventas[i].cedulaComprador%>" placeholder="<%= ventas[i].cedulaComprador%>" required>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="/lineaVentas/factura?venta=<%= ventas[i]._id %>" class="btn btn-success">Ver factura</a>
+                                <button type="submit " class="btn btn-info"><i class='fas fa-edit'></i></button>
+                                <a href="../ventas/delete/<%= ventas[i]._id %>" class="btn btn-danger"><i class='fas fa-trash'></i></a>
+                            </td>
+                        </tr>
+                    </form>
+                    <% } %>
+            </tbody>
+        </table>
+    </div>
+    <%- include('partials/footer'); -%>

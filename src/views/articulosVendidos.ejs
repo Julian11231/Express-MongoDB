@@ -1,0 +1,41 @@
+<%- include('partials/header'); -%>
+    <div class="container">
+        <h2 class="text-center mb-5">Listado de artículos vendidos</h2>
+        <table class="table table-hover text-center shadow">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Articulo vendido</th>
+                    <th>Cantidad vendida</th>
+                    <th>Fecha de la venta</th>
+                    <th>Hora de la venta</th>
+                    <th>Comprador</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < lineaVentas.length; i++) { %>
+                    <tr>
+                        <td>
+                            <%= lineaVentas[i].idArticuloVenta.nombreArticulo%>
+                        </td>
+                        <td>
+                            <%= lineaVentas[i].cantidadVenta%>
+                        </td>
+                        <td>
+                            <%= lineaVentas[i].idventa.fechaVenta%>
+                        </td>
+                        <td>
+                            <%= lineaVentas[i].idventa.horaVenta%>
+                        </td>
+                        <td>
+                            <%= lineaVentas[i].idventa.cedulaComprador%>
+                        </td>
+                        <td>
+                            <a href="/lineaVentas/factura?venta=<%= lineaVentas[i].idventa._id %>" class="btn btn-success">Ver factura</a>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+    </div>
+    <%- include('partials/footer'); -%>

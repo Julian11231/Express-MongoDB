@@ -1,0 +1,122 @@
+<%- include('partials/header'); -%>
+    <div class="container">
+        <% if(listaArticulos.length == 0){ %>
+            <div class="py-5 my-5 mx-auto">
+                <h2>Tu carrito de compras esta vacio :(</h2>
+                <p>puedes empezar a comprar <a href="/tiendas">aquí</a></p>
+            </div>
+            <% }else{ 
+                total = 0;%>
+                <h2>Carrito de compras</h2>
+                <table class="table table-hover text-center shadow mt-3">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th style="width: 316px;">Descripción</th>
+                            <th>Precio
+                                <a href="#" title="IVA y descuentos" data-toggle="popover" data-trigger="hover" data-content="El precio mostrado ya tiene el IVA incluido. Si el producto tiene descuento, en el precio mostrado también ya se habrá incluido"><i class="fas fa-info-circle text-info" style="font-size:21px;"></i></a>
+                            </th>
+                            <th style="width: 120px;">Cantidad</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i < listaArticulos.length; i++) { %>
+                            <tr>
+                                <td>
+                                    <%= listaArticulos[i].nombre%>
+                                </td>
+                                <td>
+                                    <%= listaArticulos[i].descripcion%>
+                                </td>
+                                <td>
+                                    <%= listaArticulos[i].precio %>
+                                </td>
+                                <td>
+                                    <%= listaArticulos[i].cantidad %>
+                                </td>
+                                <td>
+                                    <a href="/borrarArticuloCarro/?index=<%= i %>" class="btn btn-danger"><i class='fas fa-trash'></i></a>
+                                </td>
+                            </tr>
+                            <% 
+                                total = total + listaArticulos[i].precio*listaArticulos[i].cantidad;
+                                }                        
+                            %>
+                    </tbody>
+                </table>
+                <h4 class="float-right mr-5 pr-5 my-3">
+                    Total(
+                    <% if(listaArticulos.length <= 1){ %>
+                        <%= listaArticulos.length %> artículo )
+                            <% }else { %>
+                                <%= listaArticulos.length %> artículos )
+                                    <% } %> : $
+                                        <%= total %>
+                </h4>
+                <br>
+                <div class="mt-5">
+                    <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#comprarModal">
+                        Comprar
+                      </button>
+                    <a href="/vaciarCarro" class="btn btn-danger">Vaciar carrito</a>
+                </div>
+                <div class="modal fade" id="comprarModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Ingreso de Usuario</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <label for="cedula" class="font-weight-bold">Cédula:</label>
+                                <input type="text" id="cedula" class="form-control rounded-lg" onkeypress='return (event.charCode >= 48 && event.charCode <= 57)' maxlength="10" placeholder="Ingrese su cédula">
+                                <p class="invisible" id="txtRespuesta">Respuesta...</p>
+                                <button type="button" id="btnCheckUser" class="btn btn-primary" onclick="checkCustomer()" disabled>Comprar</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle="popover"]').popover();
+            $('#cedula').keyup(function() {
+                var cedula = document.getElementById("cedula").value;
+                if (cedula != '' && cedula.length >= 8) {
+                    document.getElementById("btnCheckUser").disabled = false;
+                } else {
+                    document.getElementById("btnCheckUser").disabled = true;
+                }
+            });
+        });
+
+        function checkCustomer() {
+            var xhttp;
+            var cedula = document.getElementById("cedula").value;
+            xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    if (this.responseText === 'existe') {
+                        window.location = "/comprar/?cedula=" + cedula;
+                    } else {
+                        $("#txtRespuesta").removeClass("invisible");
+                        $("#txtRespuesta").addClass("text-danger font-weight-bold mt-2");
+                        document.getElementById("txtRespuesta").innerHTML = 'Usuario no registrado!';
+                        setTimeout(function() {
+                            $("#txtRespuesta").addClass("invisible");
+                        }, 3000);
+                    }
+                }
+            };
+            xhttp.open("GET", "/usuarios/oneUser/?cedula=" + cedula, true);
+            xhttp.send();
+        }
+    </script>
+    <%- include('partials/footer'); -%>

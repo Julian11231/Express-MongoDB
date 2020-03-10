@@ -1,0 +1,36 @@
+<%- include('partials/header'); -%>
+    <div class="container">
+        <% if(comprasUsuario.length != 0){ %>
+            <h2 class="my-4">Compras del usuario</h2>
+            <table class="table table-hover text-center shadow">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Fecha de la venta</th>
+                        <th>Hora de la venta</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for(var i=0; i < comprasUsuario.length; i++) { %>
+                        <tr>
+                            <td>
+                                <%=comprasUsuario[i].fechaVenta%>
+                            </td>
+                            <td>
+                                <%=comprasUsuario[i].horaVenta%>
+                            </td>
+                            <td>
+                                <a href="/lineaVentas/factura?venta=<%= comprasUsuario[i]._id %>" class="btn btn-success">Ver factura</a>
+                            </td>
+                        </tr>
+                        <% } %>
+                </tbody>
+            </table>
+            <% }else { %>
+                <div class="py-5 my-5 mx-auto">
+                    <h3>El usuario aún no ha realizado ninguna compra...</h3>
+                    <p>puedes empezar a comprar <a href="/tiendas">aquí</a></p>
+                </div>
+                <% } %>
+    </div>
+    <%- include('partials/footer'); -%>
