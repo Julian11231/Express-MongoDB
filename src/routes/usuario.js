@@ -4,19 +4,15 @@ const Usuario = require('../models/usuario');
 
 router.get('/adminUsuario', async(req, res) => {
     const usuarios = await Usuario.find();
+    if (typeof localStorage === "undefined" || localStorage === null) {
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        localStorage = new LocalStorage('./scratch');
+      }
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('adminUsuario', {
-        usuarios
+        usuarios,
+        user
     });
-});
-
-router.get('/oneUser/', async(req, res) => {
-    const cedula = req.query.cedula;
-    const usuario = await Usuario.find({ "cedula": cedula }, 'cedula');
-    if (usuario.length >= 1) {
-        res.send('existe');
-    } else {
-        res.send('No existe');
-    }
 });
 
 router.post('/add', async(req, res, next) => {

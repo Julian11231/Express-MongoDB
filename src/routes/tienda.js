@@ -4,15 +4,27 @@ const Tienda = require('../models/tienda');
 
 router.get('/', async(req, res) => {
     const tiendas = await Tienda.find();
+    if (typeof localStorage === "undefined" || localStorage === null) {
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        localStorage = new LocalStorage('./scratch');
+      }
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('tiendas', {
-        tiendas
+        tiendas,
+        user
     });
 });
 
 router.get('/adminTienda', async(req, res) => {
     const tiendas = await Tienda.find();
+    if (typeof localStorage === "undefined" || localStorage === null) {
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        localStorage = new LocalStorage('./scratch');
+      }
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('adminTienda', {
-        tiendas
+        tiendas,
+        user
     });
 });
 
@@ -28,7 +40,7 @@ router.post('/edit/:id', async(req, res, next) => {
     res.redirect('/tiendas/adminTienda');
 });
 
-router.get('/delete/:id', async(req, res, next) => {
+router.delete('/delete/:id', async(req, res, next) => {
     let { id } = req.params;
     await Tienda.remove({ _id: id });
     res.redirect('/tiendas/adminTienda');

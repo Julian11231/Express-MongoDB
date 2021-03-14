@@ -1,4 +1,4 @@
-<%- include('partials/header'); -%>
+<%- include('partials/header', {usuario: user}); -%>
     <div class="container">
         <% if(comprasUsuario.length != 0){ %>
             <h2 class="my-4">Compras del usuario</h2>

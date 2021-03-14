@@ -1,22 +1,28 @@
-<%- include('partials/header'); -%>
-    <div class="container px-5 pt-3 pb-5">
+<%- include('partials/header', {usuario: user}); -%>
+    <div class="container px-2 pt-3 pb-5">
         <h2 class="mb-3">
             <a href="/tiendas" class="text-danger"><i style='font-size:24px' class='fas'>&#xf359;</i></a>
             <%= tienda[0].nombreTienda %>
         </h2>
-        <table class="table table-hover shadow w-75">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Catálogos</th>
-                </tr>
-            </thead>
+        <h4 class="mb-3">Catalogos:</h4>
+        <table class="table table-hover shadow">
             <tbody>
                 <% for(var i=0; i < catalogos.length; i++) { %>
                     <tr>
+                        <td style="width: 50px;">
+                            <div class="vacantesImg ml-2" style="width: 45px; height: 45px; padding-top: 6px;">
+                                <p class="text-center" style="font-size: 20px"><%= catalogos[i].nombreCatalogo.slice(0, 1); %></p>
+                            </div>
+                        </td>
                         <td>
-                            <a href="/articulos/?catalogoArticulo=<%= catalogos[i]._id%>&tienda=<%= tienda[0].nombreTienda %>">
-                                <%= catalogos[i].nombreCatalogo%>
-                            </a>
+                            <h5 class="pt-2 ml-2 mr-n4">
+                                <a href="/articulos/?catalogoArticulo=<%= catalogos[i]._id%>&tienda=<%= tienda[0].nombreTienda %>">
+                                    <%= catalogos[i].nombreCatalogo%>
+                                </a>
+                            </h5>
+                        </td>
+                        <td>
+                            <p class="pt-2 pl-n5"><b>Descripción: </b><%= catalogos[i].descripcionCatalogo%></p>
                         </td>
                     </tr>
                     <% } %>

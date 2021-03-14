@@ -7,18 +7,30 @@ router.get('/', async(req, res) => {
     const nitTienda = req.query.nitTienda;
     const catalogos = await Catalogo.find({ "nitTienda": nitTienda });
     const tienda = await Tienda.find({ "nit": nitTienda });
+    if (typeof localStorage === "undefined" || localStorage === null) {
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        localStorage = new LocalStorage('./scratch');
+      }
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('catalogos', {
         catalogos,
-        tienda
+        tienda,
+        user
     });
 });
 
 router.get('/adminCatalogo', async(req, res) => {
     const catalogos = await Catalogo.find();
     const tiendas = await Tienda.find();
+    if (typeof localStorage === "undefined" || localStorage === null) {
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        localStorage = new LocalStorage('./scratch');
+      }
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('adminCatalogo', {
         catalogos,
-        tiendas
+        tiendas,
+        user
     });
 });
 

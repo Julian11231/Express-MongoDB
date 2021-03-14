@@ -1,27 +1,30 @@
-<%- include('partials/header'); -%>
+<%- include('partials/header', {usuario: user}); -%>
     <div class="container px-5 pt-3 pb-5">
         <h2 class="mb-3">Tiendas</h2>
-        <table class="table table-hover text-center shadow">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% for(var i=0; i < tiendas.length; i++) { %>
-                    <tr>
-                        <td>
+        <div class="row">
+        <% for(var i=0; i < tiendas.length; i++) { %>
+            <% if(tiendas[i].estado == true) { %> 
+                <div class="col-2"> 
+                    <div class="card shadow">
+                        <div class="card-body text-center">
+                            <% if(tiendas[i].logoTienda !== undefined && tiendas[i].logoTienda !== '') { %>
                             <a href="/catalogos/?nitTienda=<%= tiendas[i].nit%>">
-                                <%= tiendas[i].nombreTienda%>
+                                <img src="<%= tiendas[i].logoTienda %>" class="rounded-circle" alt="Tiendas">
                             </a>
-                        </td>
-                        <td>
-                            <%= tiendas[i].direccionTienda%>
-                        </td>
-                    </tr>
-                    <% } %>
-            </tbody>
-        </table>
+                            <% }else{ %>
+                                <div class="vacantesImg">
+                                    <a href="/catalogos/?nitTienda=<%= tiendas[i].nit%>">
+                                        <p class="text-center"><%= tiendas[i].nombreTienda.slice(0, 1); %></p>
+                                    </a>
+                                </div>
+                            <% } %>
+                            <p class="card-text mt-1"><%= tiendas[i].nombreTienda %></p>
+                            <p class="card-text"><%= tiendas[i].direccionTienda %></p>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } %>   
+        </div>
     </div>
-    <%- include('partials/footer'); -%>
+<%- include('partials/footer'); -%>

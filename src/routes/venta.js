@@ -4,16 +4,28 @@ const Venta = require('../models/venta');
 
 router.get('/adminVenta', async(req, res) => {
     const ventas = await Venta.find();
+    if (typeof localStorage === "undefined" || localStorage === null) {
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        localStorage = new LocalStorage('./scratch');
+      }
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('adminVenta', {
-        ventas
+        ventas,
+        user
     });
 });
 
 router.get('/comprasUsuario', async(req, res) => {
     const cedulaUsuario = req.query.cedula;
     const comprasUsuario = await Venta.find({ "cedulaComprador": cedulaUsuario });
+    if (typeof localStorage === "undefined" || localStorage === null) {
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        localStorage = new LocalStorage('./scratch');
+      }
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('comprasUsuario', {
-        comprasUsuario
+        comprasUsuario,
+        user
     });
 });
 

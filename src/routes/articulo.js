@@ -8,19 +8,31 @@ router.get('/', async(req, res) => {
     const articulos = await Articulo.find({ "catalogoArticulo": catalogoArticulo });
     const catalogo = await Catalogo.find({ "_id": catalogoArticulo });
     const tienda = req.query.tienda;
+    if (typeof localStorage === "undefined" || localStorage === null) {
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        localStorage = new LocalStorage('./scratch');
+      }
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('articulos', {
         articulos,
         catalogo,
-        tienda
+        tienda,
+        user
     });
 });
 
 router.get('/adminArticulo', async(req, res) => {
     const articulos = await Articulo.find();
     const catalogos = await Catalogo.find();
+    if (typeof localStorage === "undefined" || localStorage === null) {
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        localStorage = new LocalStorage('./scratch');
+      }
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('adminArticulo', {
         articulos,
-        catalogos
+        catalogos,
+        user
     });
 });
 

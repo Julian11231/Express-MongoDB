@@ -6,10 +6,16 @@ var session = require('express-session')
 const Articulo = require('./models/articulo');
 const LineaVenta = require('./models/lineaVenta');
 const Venta = require('./models/venta');
+const Usuario = require('./models/usuario');
 const app = express();
+var bcrypt = require('bcrypt');
+if (typeof localStorage === "undefined" || localStorage === null) {
+    var LocalStorage = require('node-localstorage').LocalStorage;
+    localStorage = new LocalStorage('./scratch');
+  }
 
 // connection to db
-mongoose.connect('mongodb://localhost:27017/produndizacionIII', (err, res) => {
+mongoose.connect('mongodb://localhost:27017/tiendasOnline', (err, res) => {
     if (err) throw err;
     console.log('Base de datos: \x1b[32m%s\x1b[0m', 'online');
     console.log('Version del mongoose:', mongoose.version)
@@ -23,6 +29,7 @@ const articulo = require('./routes/articulo');
 const venta = require('./routes/venta');
 const lineaVenta = require('./routes/lineaVenta');
 const usuario = require('./routes/usuario');
+const { render } = require('ejs');
 //const session = require('./routes/session');
 
 // settings
@@ -59,6 +66,36 @@ app.use(function(req, res, next) {
     }
     next()
 })
+
+app.post('/login/', (req, res) => {
+    const user = req.body.cedula;
+    const pass = req.body.pass;
+    Usuario.find({cedula: user}).exec((err,usuario) => {
+        if(err){
+            res.send('Error en el servidor');
+            res.redirect('/');
+        }else{
+            if(usuario.length > 0){
+                if (bcrypt.compareSync(pass, usuario[0].contraseña)) {
+                    usuario[0].contraseña = ":)";
+                    localStorage.setItem('usuario',  JSON.stringify(usuario[0]));
+                    res.redirect('/');
+                } else {
+                    console.log('Contraseña incorrecta');
+                    res.redirect('/');
+                }   
+            }else{
+                res.redirect('/');
+            }
+        }
+    });
+});
+
+app.get('/logout', (req, res) => {
+    localStorage.clear();
+    req.session.destroy();
+    res.redirect('/');
+});
 
 app.post('/agregarCarro/', async(req, res, next) => {
     const id = req.query.id;
@@ -97,22 +134,24 @@ app.get('/vaciarCarro', (req, res, next) => {
     res.redirect('/carro');
 });
 
-app.get('/comprar/', async(req, res, next) => {
+
+app.get('/comprar/', function (req, res, next) {
     const cedula = req.query.cedula;
     const d = new Date();
     const date = d.toDateString();
     const hora = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
     ventaNueva = new Venta({ fechaVenta: date, horaVenta: hora, cedulaComprador: cedula });
     ventaNueva.save();
-    const ventaActual = await Venta.find({ "fechaVenta": date, "horaVenta": hora }, '_id');
+    //const ventaActual =  Venta.findOne({ "fechaVenta": date, "horaVenta": hora }, '_id');
     for (i = 0; i < req.session.articulos.length; i++) {
-        lineaVentaNueva = new LineaVenta({ idArticuloVenta: req.session.articulos[i].id, cantidadVenta: req.session.articulos[i].cantidad, idventa: ventaActual[0]._id });
+        lineaVentaNueva = new LineaVenta({ idArticuloVenta: req.session.articulos[i].id, cantidadVenta: req.session.articulos[i].cantidad, idventa: ventaNueva._id });
         lineaVentaNueva.save();
         var restarInventario = Number(req.session.articulos[i].cantidad) * (-1);
-        await Articulo.updateOne({ "_id": req.session.articulos[i].id }, { $inc: { "cantidadArticulo": restarInventario } });
+        console.log("aaaa:"+restarInventario);
+        Articulo.updateOne({ "_id": req.session.articulos[i].id }, { $inc: { "cantidadArticulo": restarInventario } });
     }
     req.session.destroy();
-    res.redirect('/lineaVentas/factura?venta=' + ventaActual[0]._id);
+    res.redirect('/lineaVentas/factura?venta=' + ventaNueva._id);
 });
 
 app.get('/borrarArticuloCarro', (req, res, next) => {
@@ -123,7 +162,9 @@ app.get('/borrarArticuloCarro', (req, res, next) => {
 
 app.get('/carro', (req, res, next) => {
     listaArticulos = req.session.articulos;
+    const user = localStorage.getItem('usuario');
     res.render('carro', {
-        listaArticulos
+        listaArticulos,
+        user
     });
 });
