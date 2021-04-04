@@ -1,66 +1,46 @@
 <%- include('partials/header', {usuario: user}); -%>
-    <div class="container-fluid">
-        <h2 class="text-center mb-5">Administración tiendas</h2>
-        <div class="row">
-            <!-- FORM-->
-            <div class="col-md-4">
-                <div class="card shadow">
-                    <div class="card-header bg-dark text-light font-weight-bold">Agregar Tienda</div>
-                    <div class="card-body">
-                        <form action="../tiendas/add" method="post">
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="nit" placeholder="NIT" required>
-                            </div>
-                            <div class="form-group">
-                                <input class="form-control" name="nombreTienda" placeholder="Nombre de la tienda" required>
-                            </div>
-                            <div class="form-group">
-                                <input class="form-control" name="direccionTienda" placeholder="Dirección de la tienda" required>
-                            </div>
-                            <button class="btn btn-primary" type="submit">Agregar</button>
-                        </form>
+
+    <div class="clearfix px-5">
+        <div class="float-left">
+            <a href="/admin" class="btn btn-danger btn-sm">
+                <i class="fa fa-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="text-center mb-1">Administración tienda: <%= tienda.nombreTienda%></h2>
+        <h5 class="text-center font-italic font-weight-normal mb-4">Actualiza los datos de tu tienda</h5>
+        <div class="card shadow mx-auto" style="width: 600px;">
+            <div class="card-body">
+                <form action="/tiendas/edit/<%=tienda._id %>" method="post">
+                    <% if(tienda.estado == true){ %>
+                        <h6>Estado: <span class="badge badge-pill badge-success">Habilitada</span></h6>
+                    <% }else{ %>
+                        <h6>Estado: <span class="badge badge-pill badge-danger">Inhabilitada</span></h6>
+                    <% } %>
+                    <hr>
+                    <label for="nit">Nit:</label>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="nit" value="<%=tienda.nit%>" placeholder="<%=tienda.nit%>">
                     </div>
-                </div>
-            </div>
-            <!--LIST -->
-            <div class="col-md-8">
-                <table class="table table-hover text-center shadow">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>NIT</th>
-                            <th>Nombre</th>
-                            <th>Dirección</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for(var i=0; i < tiendas.length; i++) { %>
-                            <form action="../tiendas/edit/<%=tiendas[i]._id %>" method="post">
-                                <tr>
-                                    <td>
-                                        <div class="form-group">
-                                            <input class="form-control-plaintext" type="text" name="nit" value="<%=tiendas[i].nit%>" placeholder="<%=tiendas[i].nit%>" disabled>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input class="form-control" type="text" name="nombreTienda" value="<%=tiendas[i].nombreTienda%>" placeholder="<%=tiendas[i].nombreTienda%>" required>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input class="form-control" type="text" name="direccionTienda" value="<%= tiendas[i].direccionTienda%>" placeholder="<%= tiendas[i].direccionTienda%>" required>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <button type="submit " class="btn btn-info"><i class='fas fa-edit'></i></button>
-                                        <a href="../tiendas/delete/<%= tiendas[i]._id %>" class="btn btn-danger"><i class='fas fa-trash'></i></a>
-                                    </td>
-                                </tr>
-                            </form>
-                            <% } %>
-                    </tbody>
-                </table>
+                    <label for="nombreTienda">Nombre de la tienda:</label>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="nombreTienda" value="<%=tienda.nombreTienda%>" placeholder="<%=tienda.nombreTienda%>" required>
+                    </div>
+                    <label for="direccionTienda">Dirección de la tienda:</label>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="direccionTienda" value="<%= tienda.direccionTienda%>" placeholder="<%= tienda.direccionTienda%>" required>
+                    </div>
+                    <div class="text-center mt-2">
+                        <button type="submit " class="btn btn-info">Editar <i class='fas fa-edit'></i></button>
+                        <% if(tienda.estado == true){ %>
+                            <a href="/tiendas/disable/<%= tienda._id %>" class="btn btn-danger">Inhabilitar <i class='fas fa-ban'></i></a>
+                        <% }else{ %>
+                            <a href="/tiendas/enable/<%= tienda._id %>" class="btn btn-success">Habilitar <i class='fas fa-check-circle'></i></a>
+                        <% } %>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -8,7 +8,11 @@ const articuloSchema = Schema({
     descuentoArticulo: { type: String, required: [true, 'El descuente del artículo es necesario'] },
     impuestoArticulo: { type: String, required: [true, 'El impuesto del artículo es necesario'] },
     cantidadArticulo: { type: Number, required: [true, 'La cantidad del artículo es es necesaria'] },
-    catalogoArticulo: { type: String, required: [true, 'El id del catálogo es necesario'] }
+    catalogoArticulo: { type:Schema.Types.ObjectId, ref:'catalogoTienda', required: [true, 'El id del catálogo es necesario'] },
+    idTienda: { type: Schema.Types.ObjectId, ref: 'tienda', required: [true, 'El id de la tienda es necesario'] },
+    estado: {type:Boolean, required:[true, 'El estado es necesario'], default: true}
 });
 
 module.exports = mongoose.model('articulo', articuloSchema);
+
+

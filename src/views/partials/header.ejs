@@ -7,8 +7,6 @@
     <!-- BOOTSTRAP CDN -->
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../css/style.css">
-    <link rel="stylesheet" href="src/css/style.css">
 
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -47,21 +45,12 @@
                 <li class="nav-item active mr-4">
                     <a class="nav-link" href="/tiendas">Comprar</a>
                 </li>
-                <% if(usuario != null){ %>
+                <% if(usuario != null && usuario.rol == "USER_OWNER"){ %>
                 <li class="nav-item dropdown">
                     <div class="btn-group">
-                        <a href="/admin" class="btn btn-outline-dark text-white">Administrar</a>
+                        <a href="/admin" class="btn btn-outline-dark text-white">Administrar Tienda</a>
                         <button type="button" class="btn btn-outline-dark text-white dropdown-toggle dropdown-toggle-split" data-toggle="dropdown">
                         </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="/tiendas/adminTienda">Tiendas</a>
-                            <a class="dropdown-item" href="/catalogos/adminCatalogo">Catálogos</a>
-                            <a class="dropdown-item" href="/articulos/adminArticulo">Artículos</a>
-                            <a class="dropdown-item" href="/ventas/adminVenta">Ventas</a>
-                            <a class="dropdown-item" href="/usuarios/adminUsuario">Usuarios</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/lineaVentas/articulosVendidos">Lista artículos vendidos</a>
-                        </div>
                     </div>
                 </li>
                 <% } %>
@@ -99,19 +88,40 @@
         
         <!-- Modal body -->
         <div class="modal-body">
-            <form action="/login" method="post">
-                <div class="form-group">
-                    <label for="cedula">Cedula:</label>
-                    <input class="form-control" id="cedula" name="cedula" placeholder="cedula" required>
-                </div>
-                <div class="form-group">
-                    <label for="pass">Contraseña:</label>
-                    <input type="password" id="pass" class="form-control" name="pass" placeholder="Contraseña" required>
-                </div>
-                <button class="btn btn-primary btn-block" type="submit">Iniciar sesión</button>
-            </form>
+            <div class="form-group">
+                <label for="cedula">Cedula:</label>
+                <input class="form-control" id="cedula" name="cedula" placeholder="cedula" required>
+            </div>
+            <div class="form-group">
+                <label for="pass">Contraseña:</label>
+                <input type="password" id="pass" class="form-control" name="pass" placeholder="Contraseña" required>
+            </div>
+            <p class="text-danger font-weight-bold mt-2" id="txtRespuesta" style="display: none;">Respuesta...</p>
+            <button class="btn btn-primary btn-block" onclick="login()">Iniciar sesión</button>
         </div>
         
       </div>
     </div>
   </div>
+<script>
+  function login() {
+    var xhttp = new XMLHttpRequest();
+    var cedula = document.getElementById("cedula").value;
+    var pass = document.getElementById("pass").value;
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+       if(this.responseText === 'ok'){
+           location.reload();
+       }else{
+        document.getElementById("txtRespuesta").style.display = "block";
+        document.getElementById("txtRespuesta").innerHTML = 'Contraseña o usuario incorrecto';
+        setTimeout(function() {
+            document.getElementById("txtRespuesta").style.display = "none";
+        }, 3000);
+      }
+      }
+    };
+    xhttp.open("GET", "/login?cedula="+cedula+"&pass="+pass, true);
+    xhttp.send();
+  }
+</script>

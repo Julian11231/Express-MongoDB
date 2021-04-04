@@ -64,28 +64,28 @@ app.use(function(req, res, next) {
     if (!req.session.articulos) {
         req.session.articulos = [];
     }
+    if (!req.session.tiendas) {
+        req.session.tiendas = [];
+    }
     next()
 })
 
-app.post('/login/', (req, res) => {
-    const user = req.body.cedula;
-    const pass = req.body.pass;
-    Usuario.find({cedula: user}).exec((err,usuario) => {
+app.get('/login', (req, res) => {
+    const user = req.query.cedula;
+    const pass = req.query.pass;
+    Usuario.find({cedula: user}).populate('tienda').exec((err,usuario) => {
         if(err){
             res.send('Error en el servidor');
-            res.redirect('/');
         }else{
             if(usuario.length > 0){
-                if (bcrypt.compareSync(pass, usuario[0].contraseña)) {
+                if (bcrypt.compareSync(pass, usuario[0].contraseña) && usuario[0].estado) {
                     usuario[0].contraseña = ":)";
                     localStorage.setItem('usuario',  JSON.stringify(usuario[0]));
-                    res.redirect('/');
+                    res.send('ok');
                 } else {
-                    console.log('Contraseña incorrecta');
-                    res.redirect('/');
+                    res.send('Contraseña incorrecta');
                 }   
             }else{
-                res.redirect('/');
             }
         }
     });
@@ -102,31 +102,29 @@ app.post('/agregarCarro/', async(req, res, next) => {
     const cantidad = req.body.cantidad;
     var articuloYaAgregado = false;
     if (req.session.articulos.length == 0) {
-        const product = await Articulo.find({ "_id": id });
-        const nombreArticulo = product[0].nombreArticulo;
-        const descripcionArticulo = product[0].descripcionArticulo;
+        const product = await Articulo.find({ "_id": id }).populate('idTienda');
         const precio = parseFloat(product[0].precioArticulo) + parseFloat(product[0].precioArticulo) * parseFloat(product[0].impuestoArticulo) / 100 - parseFloat(product[0].precioArticulo) * parseFloat(product[0].descuentoArticulo) / 100;
         const precioFinal = precio.toFixed(2);
-        var articulo = { id: id, nombre: nombreArticulo, descripcion: descripcionArticulo, precio: precioFinal, cantidad: cantidad };
+        var articulo = { id: id, nombre: product[0].nombreArticulo, descripcion: product[0].descripcionArticulo, precio: precioFinal, cantidad: cantidad, catalogo: product[0].catalogoArticulo, tienda: product[0].idTienda.nombreTienda };
         req.session.articulos.push(articulo);
+        res.redirect('/articulos/?catalogoArticulo='+product[0].catalogoArticulo+'&tienda='+product[0].idTienda.nombreTienda);
     } else {
         for (i = 0; i < req.session.articulos.length; i++) {
             if (req.session.articulos[i].id == id) {
                 req.session.articulos[i].cantidad = parseInt(req.session.articulos[i].cantidad) + parseInt(cantidad);
                 articuloYaAgregado = true;
+                res.redirect('/articulos/?catalogoArticulo='+req.session.articulos[i].catalogo+'&tienda='+req.session.articulos[i].tienda);
             }
         }
         if (articuloYaAgregado == false) {
-            const product = await Articulo.find({ "_id": id });
-            const nombreArticulo = product[0].nombreArticulo;
-            const descripcionArticulo = product[0].descripcionArticulo;
+            const product = await Articulo.find({ "_id": id }).populate('idTienda');
             const precio = parseFloat(product[0].precioArticulo) + parseFloat(product[0].precioArticulo) * parseFloat(product[0].impuestoArticulo) / 100 - parseFloat(product[0].precioArticulo) * parseFloat(product[0].descuentoArticulo) / 100;
             const precioFinal = precio.toFixed(2);
-            var articulo = { id: id, nombre: nombreArticulo, descripcion: descripcionArticulo, precio: precioFinal, cantidad: cantidad };
+            var articulo = { id: id, nombre: product[0].nombreArticulo, descripcion: product[0].descripcionArticulo, precio: precioFinal, cantidad: cantidad, catalogo: product[0].catalogoArticulo, tienda: product[0].idTienda.nombreTienda };
             req.session.articulos.push(articulo);
+            res.redirect('/articulos/?catalogoArticulo='+product[0].catalogoArticulo+'&tienda='+product[0].idTienda.nombreTienda);
         }
     }
-    res.redirect('/tiendas');
 });
 
 app.get('/vaciarCarro', (req, res, next) => {
@@ -162,7 +160,7 @@ app.get('/borrarArticuloCarro', (req, res, next) => {
 
 app.get('/carro', (req, res, next) => {
     listaArticulos = req.session.articulos;
-    const user = localStorage.getItem('usuario');
+    const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('carro', {
         listaArticulos,
         user

@@ -2,7 +2,7 @@
     <div class="container px-2 pt-3 pb-5">
         <h2 class="mb-3">
             <a href="/tiendas" class="text-danger"><i style='font-size:24px' class='fas'>&#xf359;</i></a>
-            <%= tienda[0].nombreTienda %>
+            <%= catalogos[0].idTienda.nombreTienda %>
         </h2>
         <h4 class="mb-3">Catalogos:</h4>
         <table class="table table-hover shadow">
@@ -16,7 +16,7 @@
                         </td>
                         <td>
                             <h5 class="pt-2 ml-2 mr-n4">
-                                <a href="/articulos/?catalogoArticulo=<%= catalogos[i]._id%>&tienda=<%= tienda[0].nombreTienda %>">
+                                <a href="/articulos/?catalogoArticulo=<%= catalogos[i]._id%>&tienda=<%= catalogos[i].idTienda.nombreTienda %>">
                                     <%= catalogos[i].nombreCatalogo%>
                                 </a>
                             </h5>

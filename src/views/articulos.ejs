@@ -1,61 +1,39 @@
 <%- include('partials/header', {usuario: user}); -%>
-    <div class="container px-5 pt-3 pb-5">
-        <h2 class="mb-3">
-            <%= tienda %> /
-                <%= catalogo[0].nombreCatalogo%>
+    <div class="px-5">
+        <h2 class="mb-4">
+            <a href="/catalogos/?idTienda=<%= articulos[0].idTienda%>" class="text-danger"><i style='font-size:24px' class='fas'>&#xf359;</i></a>
+            <%= tienda %> / <%= articulos[0].catalogoArticulo.nombreCatalogo%>
         </h2>
-        <table class="table table-hover text-center shadow">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Nombre</th>
-                    <th style="width: 316px;">Descripción</th>
-                    <th>
-                        Precio
-                        <a href="#" title="IVA y descuentos" data-toggle="popover" data-trigger="hover" data-content="El precio mostrado ya tiene el IVA incluido. Si el producto tiene descuento, en el precio mostrado también ya se habrá incluido"><i class="fas fa-info-circle text-info" style="font-size:21px;"></i></a>
-                    </th>
-                    <th>Un. disponibles</th>
-                    <th style="width: 120px;">Cantidad</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <% for(var i=0; i < articulos.length; i++) { %>
-                    <tr>
-                        <td>
-                            <%= articulos[i].nombreArticulo%>
-                        </td>
-                        <td>
-                            <%= articulos[i].descripcionArticulo%>
-                        </td>
-                        <td>
-                            <% precio = parseFloat(articulos[i].precioArticulo) + parseFloat(articulos[i].precioArticulo)*parseFloat(articulos[i].impuestoArticulo)/100 - parseFloat(articulos[i].precioArticulo)*parseFloat(articulos[i].descuentoArticulo)/100; %>
-                                <% precioFinal = precio.toFixed(2); %>
-                                    <%= precioFinal %>
-                                        <% if(parseInt(articulos[i].descuentoArticulo) > 0){ %>
-                                            <span class="badge badge-pill badge-danger"><i class="fa fa-minus" style="font-size: 10px;"></i> <%=articulos[i].descuentoArticulo %>%</span>
-                                            <% } %>
-                        </td>
-                        <td>
-                            <%= articulos[i].cantidadArticulo%>
-                        </td>
-                        <td>
-                            <form action="/agregarCarro/?id=<%=articulos[i]._id %>" method="post">
-                                <div class="form-group">
-                                    <input type="number" class="form-control" name="cantidad" min="1" max="<%= articulos[i].cantidadArticulo%>" value="1" required>
+        <div class="card-group">
+            <% for(var i=0; i < articulos.length; i++) { %>
+                <div class="card shadow" style="max-width: 300px;">
+                    <img class="card-img-top" src="img_avatar1.png" alt="Card image">
+                    <div class="card-body">
+                        <h5><b class="mt-5"><%= articulos[i].nombreArticulo %></b> - <small><%= articulos[i].descripcionArticulo %></small></h5>
+                        <% precio = parseFloat(articulos[i].precioArticulo) + parseFloat(articulos[i].precioArticulo)*parseFloat(articulos[i].impuestoArticulo)/100 - parseFloat(articulos[i].precioArticulo)*parseFloat(articulos[i].descuentoArticulo)/100; %>
+                        <% precioFinal = precio.toFixed(2); %>
+                        <% if(parseInt(articulos[i].descuentoArticulo) > 0){ %>
+                            <% precionSinDescuento = parseFloat(articulos[i].precioArticulo) + parseFloat(articulos[i].precioArticulo)*parseFloat(articulos[i].impuestoArticulo)/100; %>
+                            <h6>Precio: 
+                                <span class="text-danger ml-1"> $<%= precioFinal %><span class="text-secondary small mr-1"> (-<%= articulos[i].descuentoArticulo %>%)</span></span> 
+                                <del class="text-secondary small"> $<%= precionSinDescuento %></del>
+                            </h6>
+                        <% }else{ %>
+                            <h6>Precio: <span class="text-danger ml-2"> $<%= precioFinal %></span></h6>
+                        <% } %>
+                        <h6 class="font-weight-normal"><small>Und.Disp: <span class="text-secondary"><%= articulos[i].cantidadArticulo %></span></small></h6>
+                        <form action="/agregarCarro/?id=<%=articulos[i]._id %>" method="post">
+                            <div class="input-group mb-3 input-group-sm w-75">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Cantidad:</span>
                                 </div>
-                        </td>
-                        <td>
-                            <button class="btn btn-success" type="submit"><i class='fas fa-shopping-cart'></i></button>
-                            </form>
-                        </td>
-                    </tr>
-                    <% } %>
-            </tbody>
-        </table>
+                                <input type="number" id="cantidad" class="form-control" name="cantidad" min="1" max="<%= articulos[i].cantidadArticulo%>" value="1" required>
+                            </div>
+                            <button class="btn btn-success" type="submit">Agreagar al carrito <i class='fas fa-shopping-cart'></i></button>
+                        </form>
+                    </div>
+                </div>
+            <% } %>   
+        </div>
     </div>
-    <script>
-        $(document).ready(function() {
-            $('[data-toggle="popover"]').popover();
-        });
-    </script>
-    <%- include('partials/footer'); -%>
+<%- include('partials/footer'); -%>

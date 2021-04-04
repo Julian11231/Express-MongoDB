@@ -1,71 +1,95 @@
 <%- include('partials/header', {usuario: user}); -%>
-    <div class="container-fluid">
-        <h2 class="text-center mb-5">Administración catálogos</h2>
-        <div class="row">
-            <!-- FORM-->
-            <div class="col-md-4">
-                <div class="card shadow">
-                    <div class="card-header bg-dark text-light font-weight-bold">Agregar catálogo</div>
-                    <div class="card-body">
-                        <form action="../catalogos/add" method="post">
+    <div class="px-5">
+        <div class="clearfix">
+            <div class="float-left">
+                <a href="/admin" class="btn btn-danger btn-sm">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+            </div>
+            <h2 class="text-center">Administración catálogos: <%= user.tienda.nombreTienda %></h2>
+            <h5 class="text-center font-italic font-weight-normal">Actualiza los datos de tus catálogos</h5>
+            <hr>
+        </div>
+
+         <!-- The Modal -->
+        <div class="modal fade" id="addCatalogo">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-dark">
+                        <h4 class="modal-title text-light font-weight-bold">Agregar catálogo</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="color: white;">&times;</button>
+                    </div>
+                    
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form action="/catalogos/add" method="post">
                             <div class="form-group">
-                                <input class="form-control" name="nombreCatalogo" placeholder="Nombre del catálogo" required>
+                                <input class="form-control" name="nombreCatalogo" placeholder="Nombre del catálogo" maxlength="40" required>
                             </div>
                             <div class="form-group">
-                                <label for="sel1">Tienda (seleccione una):</label>
-                                <select class="form-control" id="nitTienda" name="nitTienda">
-                                    <% for(var i=0; i < tiendas.length; i++) { %>
-                                  <option><%=tiendas[i].nombreTienda%></option>
-                                  <% } %>
-                                </select>
+                                <label for="sel1">Descripción:</label>
+                                <textarea class="form-control" name="descripcionCatalogo" placeholder="Descripción del catálogo" rows="3" maxlength="100" required></textarea>
                             </div>
-                            <button class="btn btn-primary" type="submit">Agregar</button>
+                            <input type="hidden" name="nitTienda" value="<%= user.tienda.nit %>">
+                            <div class="text-center">
+                                <button class="btn btn-primary" type="submit">Agregar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
-            <!--LIST -->
-            <div class="col-md-8">
-                <table class="table table-hover text-center shadow">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Nombre del Catálogo</th>
-                            <th>Tienda</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% for(var i=0; i < catalogos.length; i++) { %>
-                            <form action="../catalogos/edit/<%=catalogos[i]._id %>" method="post">
-                                <tr>
-                                    <td>
-                                        <div class="form-group">
-                                            <input class="form-control" type="text" name="nombreCatalogo" value="<%=catalogos[i].nombreCatalogo%>" placeholder="<%=catalogos[i].nombreCatalogo%>" required>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <select class="form-control" name="nitTienda">
-                                                <% for(var j=0; j < tiendas.length; j++) { 
-                                                  if(tiendas[j].nit == catalogos[i].nitTienda){    
-                                                %>
-                                              <option value="<%=tiendas[j].nit%>" selected><%=tiendas[j].nombreTienda%></option>
-                                              <% } else{ %>
-                                                <option value="<%=tiendas[j].nit%>"><%=tiendas[j].nombreTienda%></option>
-                                                <% } }%>
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <button type="submit " class="btn btn-info"><i class='fas fa-edit'></i></button>
-                                        <a href="../catalogos/delete/<%= catalogos[i]._id %>" class="btn btn-danger"><i class='fas fa-trash'></i></a>
-                                    </td>
-                                </tr>
-                            </form>
-                            <% } %>
-                    </tbody>
-                </table>
-            </div>
         </div>
+
+        <button type="button" class="btn btn-primary my-3" data-toggle="modal" data-target="#addCatalogo">
+            Añadir catálogo
+          </button>
+
+        <table class="table table-hover text-center shadow">
+            <thead class="thead-dark">
+                <tr>
+                    <th style="width: 280px;">Nombre del Catálogo</th>
+                    <th style="width: 180px;">Estado</th>
+                    <th>Descripción</th>
+                    <th style="width: 250px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < catalogos.length; i++) { %>
+                    <form action="/catalogos/edit/<%=catalogos[i]._id %>" method="post">
+                        <tr>
+                            <td class="pt-4">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" name="nombreCatalogo" value="<%=catalogos[i].nombreCatalogo%>" placeholder="<%=catalogos[i].nombreCatalogo%>"  maxlength="40" required>
+                                </div>
+                            </td>
+                            <td>
+                                <% if(catalogos[i].estado == true){ %>
+                                    <h5><span class="badge badge-pill badge-success mt-3">Habilitado</span></h5>
+                                <% }else{ %>
+                                    <h5><span class="badge badge-pill badge-danger mt-3">Inhabilitado</span></h5>
+                                <% } %>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <textarea class="form-control" name="descripcionCatalogo" value="<%=catalogos[i].descripcionCatalogo%>" placeholder="<%=catalogos[i].descripcionCatalogo%>" rows="2" maxlength="100" required></textarea>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="pt-4">
+                                <button type="submit " class="btn btn-info"><i class='fas fa-edit'></i></button>
+                                <% if(catalogos[i].estado == true){ %>
+                                    <a href="/catalogos/disable/<%= catalogos[i]._id %>" class="btn btn-danger">Inhabilitar <i class='fas fa-ban'></i></a>
+                                <% }else{ %>
+                                    <a href="/catalogos/enable/<%= catalogos[i]._id %>" class="btn btn-success">Habilitar <i class='fas fa-check-circle'></i></a>
+                                <% } %>
+                            </td>
+                        </tr>
+                    </form>
+                    <% } %>
+            </tbody>
+        </table>
+
     </div>
     <%- include('partials/footer'); -%>

@@ -1,12 +1,12 @@
 <%- include('partials/header', {usuario: user}); -%>
     <div class="container px-5">
-        <h2 class="text-center my-5">Administración</h2 class="text-center my-5">
+        <h2 class="text-center my-5">Administración: <%= user.tienda.nombreTienda %> </h2 class="text-center my-5">
         <div class="row">
             <div class="col-4">
                 <div class="card bg-info text-center text-white shadow" style="height: 128px;">
                     <div class="card-body">
-                        <a href="/tiendas/adminTienda" class="btn btn-link text-white">
-                            <h4 class="mt-3">Tiendas</h4>
+                        <a href="/tiendas/adminTienda/?nitTienda=<%= user.tienda.nit %>" class="btn btn-link text-white">
+                            <h4 class="mt-3">Tienda</h4>
                         </a>
                     </div>
                 </div>
@@ -14,7 +14,7 @@
             <div class="col-4">
                 <div class="card bg-info text-center text-white shadow" style="height: 128px;">
                     <div class="card-body">
-                        <a href="/catalogos/adminCatalogo" class="btn btn-link text-white">
+                        <a href="/catalogos/adminCatalogo/?idTienda=<%= user.tienda._id %>" class="btn btn-link text-white">
                             <h4 class="mt-3">Catálogos</h4>
                         </a>
                     </div>
@@ -36,15 +36,6 @@
                     <div class="card-body">
                         <a href="/ventas/adminVenta" class="btn btn-link text-white">
                             <h4 class="mt-3">Ventas</h4>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="card bg-info text-center text-white shadow" style="height: 128px;">
-                    <div class="card-body">
-                        <a href="/usuarios/adminUsuario" class="btn btn-link text-white">
-                            <h4 class="mt-3">Usuarios</h4>
                         </a>
                     </div>
                 </div>

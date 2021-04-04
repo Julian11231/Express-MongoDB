@@ -5,8 +5,7 @@ const Catalogo = require('../models/catalogoTienda');
 
 router.get('/', async(req, res) => {
     const catalogoArticulo = req.query.catalogoArticulo;
-    const articulos = await Articulo.find({ "catalogoArticulo": catalogoArticulo });
-    const catalogo = await Catalogo.find({ "_id": catalogoArticulo });
+    const articulos = await Articulo.find({ "catalogoArticulo": catalogoArticulo }).populate('catalogoArticulo');
     const tienda = req.query.tienda;
     if (typeof localStorage === "undefined" || localStorage === null) {
         var LocalStorage = require('node-localstorage').LocalStorage;
@@ -15,15 +14,16 @@ router.get('/', async(req, res) => {
     const user = JSON.parse(localStorage.getItem('usuario'));
     res.render('articulos', {
         articulos,
-        catalogo,
         tienda,
         user
     });
 });
 
 router.get('/adminArticulo', async(req, res) => {
-    const articulos = await Articulo.find();
-    const catalogos = await Catalogo.find();
+    const catalogoArticulo = req.query.catalogoArticulo;
+    const nitTienda = req.query.nitTienda;
+    const articulos = await Articulo.find({ "catalogoArticulo": catalogoArticulo });
+    const catalogos = await Catalogo.find({ "nitTienda": nitTienda });
     if (typeof localStorage === "undefined" || localStorage === null) {
         var LocalStorage = require('node-localstorage').LocalStorage;
         localStorage = new LocalStorage('./scratch');
